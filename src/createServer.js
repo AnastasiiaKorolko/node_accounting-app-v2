@@ -17,7 +17,7 @@ function createServer() {
 
     if (userId) {
       filteredExpenses = filteredExpenses.filter(
-        (exp) => exp.userId === parseInt(userId)
+        (exp) => exp.userId === Number(userId)
       );
     }
 
@@ -55,7 +55,7 @@ function createServer() {
   });
 
   app.get('/expenses/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const expense = expenses.find((exp) => exp.id === id);
 
     if (!expense) {
@@ -95,7 +95,7 @@ function createServer() {
   });
 
   app.patch('/expenses/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const { title, amount, category, note, spentAt } = req.body;
     const expense = expenses.find((exp) => exp.id === id);
 
@@ -127,7 +127,7 @@ function createServer() {
   });
 
   app.delete('/expenses/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const expenseIndex = expenses.findIndex((exp) => exp.id === id);
 
     if (expenseIndex === -1) {
@@ -143,7 +143,7 @@ function createServer() {
   });
 
   app.get('/users/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const user = users.find((us) => us.id === id);
 
     if (!user) {
@@ -170,7 +170,7 @@ function createServer() {
   });
 
   app.patch('/users/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const { name } = req.body;
     const user = users.find((us) => us.id === id);
 
@@ -188,7 +188,7 @@ function createServer() {
   });
 
   app.delete('/users/:id', (req, res) => {
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const userIndex = users.findIndex((us) => us.id === id);
 
     if (userIndex === -1) {
