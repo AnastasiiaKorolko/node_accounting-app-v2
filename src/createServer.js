@@ -12,35 +12,43 @@ function createServer() {
   app.use(express.json());
 
   app.get('/expenses', (req, res) => {
-    const { userId, category, startDate, endDate, categories } = req.query;
+    const { userId, category, from, to, categories } = req.query;
     let filteredExpenses = expenses;
 
     if (userId) {
       filteredExpenses = filteredExpenses.filter(
-        (exp) => exp.userId === userId,
+        (exp) => exp.userId === userId
       );
     }
 
     if (category) {
       filteredExpenses = filteredExpenses.filter(
-        (exp) => exp.category === category,
+        (exp) => exp.category === category
       );
     }
 
     if (categories) {
       const categoryArray = Array.isArray(categories)
         ? categories
-        : categories.split(',');
+        : categories.split(',').map((cat) => cat.trim());
 
       filteredExpenses = filteredExpenses.filter((exp) =>
-        categoryArray.includes(exp.category),);
+        categoryArray.includes(exp.category)
+      );
     }
 
-    if (startDate && endDate) {
+    if (from && to) {
+      const start = new Date(from);
+      const end = new Date(to);
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+
       filteredExpenses = filteredExpenses.filter((exp) => {
         const expData = new Date(exp.spentAt);
 
-        return expData >= new Date(startDate) && expData <= new Date(endDate);
+        return expData >= start && expData <= end;
       });
     }
     res.json(filteredExpenses);
@@ -78,7 +86,7 @@ function createServer() {
       note: note || '',
       title,
       amount,
-      spentAt: spentAt || new Date().toISOString(),
+      spentAt: spentAt || new Date().toISOString()
     };
 
     expenses.push(newExpense);
@@ -153,7 +161,7 @@ function createServer() {
 
     const newUser = {
       id: uuidv4(),
-      name,
+      name
     };
 
     users.push(newUser);
@@ -196,5 +204,5 @@ function createServer() {
 }
 
 module.exports = {
-  createServer,
+  createServer
 };
