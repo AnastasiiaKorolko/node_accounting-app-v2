@@ -2,11 +2,11 @@
 
 const express = require('express');
 
-const { v4: uuidv4 } = require('uuid');
-
 function createServer() {
   const expenses = [];
   const users = [];
+  let expenseIdCounter = 1;
+  let userIdCounter = 1;
   const app = express();
 
   app.use(express.json());
@@ -17,7 +17,7 @@ function createServer() {
 
     if (userId) {
       filteredExpenses = filteredExpenses.filter(
-        (exp) => exp.userId === userId
+        (exp) => exp.userId === parseInt(userId)
       );
     }
 
@@ -55,7 +55,7 @@ function createServer() {
   });
 
   app.get('/expenses/:id', (req, res) => {
-    const id = req.params.id;
+    const id = parseInt(req.params.id);
     const expense = expenses.find((exp) => exp.id === id);
 
     if (!expense) {
@@ -80,7 +80,7 @@ function createServer() {
     }
 
     const newExpense = {
-      id: uuidv4(),
+      id: expenseIdCounter++,
       userId,
       category: category || '',
       note: note || '',
@@ -95,7 +95,7 @@ function createServer() {
   });
 
   app.patch('/expenses/:id', (req, res) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
     const { title, amount, category, note, spentAt } = req.body;
     const expense = expenses.find((exp) => exp.id === id);
 
@@ -127,7 +127,7 @@ function createServer() {
   });
 
   app.delete('/expenses/:id', (req, res) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
     const expenseIndex = expenses.findIndex((exp) => exp.id === id);
 
     if (expenseIndex === -1) {
@@ -143,7 +143,7 @@ function createServer() {
   });
 
   app.get('/users/:id', (req, res) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
     const user = users.find((us) => us.id === id);
 
     if (!user) {
@@ -160,7 +160,7 @@ function createServer() {
     }
 
     const newUser = {
-      id: uuidv4(),
+      id: userIdCounter++,
       name
     };
 
@@ -169,8 +169,8 @@ function createServer() {
     return res.status(201).json(newUser);
   });
 
-  app.put('/users/:id', (req, res) => {
-    const { id } = req.params;
+  app.patch('/users/:id', (req, res) => {
+    const id = parseInt(req.params.id);
     const { name } = req.body;
     const user = users.find((us) => us.id === id);
 
@@ -178,7 +178,7 @@ function createServer() {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    if (!name) {
+    if (name === undefined || name.trim() === '') {
       return res.status(400).json({ message: 'Name is required' });
     }
 
@@ -188,7 +188,7 @@ function createServer() {
   });
 
   app.delete('/users/:id', (req, res) => {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
     const userIndex = users.findIndex((us) => us.id === id);
 
     if (userIndex === -1) {
